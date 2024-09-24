@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 # Загружаем набор данных Ирисы
 iris = datasets.load_iris()
 
+# Выводим названия признаков
 print(iris.feature_names)
 # Смотрим на данные, выводим 10 первых строк:
 print(iris.data[:10])
