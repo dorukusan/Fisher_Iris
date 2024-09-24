@@ -7,7 +7,6 @@ from sklearn.svm import SVC
 from sklearn import metrics
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import silhouette_score
 
 
 # Загружаем набор данных Ирисы
@@ -33,7 +32,6 @@ iris_frame['target'] = iris.target
 # Для наглядности добавляем столбец с сортами
 iris_frame['name'] = iris_frame.target.apply(lambda x: iris.target_names[x])
 
-# print(iris_frame)
 
 # Разделяем данные на обучающую и тестовую выборки
 train_data, test_data, train_labels, test_labels = train_test_split(
@@ -42,11 +40,6 @@ train_data, test_data, train_labels, test_labels = train_test_split(
     test_size=0.3,
     # random_state=42
 )
-
-# print(train_data)
-# print(test_data)
-# print(train_labels)
-# print(test_labels)
 
 
 # Стандартизация данных
@@ -97,10 +90,6 @@ print(metrics.classification_report(test_labels, mapped_predictions_kmeans))
 print("\nОценка точности для SVM:", accuracy_svm)
 print(metrics.classification_report(test_labels, model_predictions_svm))
 
-# # Оценка качества кластеризации с помощью коэффициента силуэта
-# silhouette_avg = silhouette_score(scaled_test_data, model_predictions_kmeans)
-# print("Silhouette Score для KMeans:", silhouette_avg)
-
 
 # # Получение центроидов и меток из KMeans
 # centroids = kmeans.cluster_centers_
@@ -147,14 +136,3 @@ plt.colorbar(label='Predicted Label')
 
 plt.tight_layout()
 plt.show()
-
-# # График для предсказанных кластеров KMeans
-# plt.subplot(2, 2, 4)
-# plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=model_predictions_kmeans, cmap='viridis', marker='o', edgecolor='k', s=100)
-# plt.title('Предсказанные кластеры KMeans')
-# plt.xlabel('Sepal Length (scaled)')
-# plt.ylabel('Sepal Width (scaled)')
-# plt.colorbar(label='Cluster')
-
-# plt.tight_layout()
-# plt.show()
