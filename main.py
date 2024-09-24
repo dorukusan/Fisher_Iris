@@ -67,7 +67,7 @@ model_predictions_kmeans = kmeans.predict(scaled_test_set)
 
 
 # Обучение модели SVM
-svm = SVC(kernel='linear', C=100)
+svm = SVC(kernel='linear')
 svm.fit(scaled_train_set, train_labels)
 
 # Предсказание на тестовых данных (SVM)
@@ -108,7 +108,7 @@ print(metrics.classification_report(test_labels, model_predictions_svm))
 # Визуализация результатов
 plt.figure(figsize=(12, 12))
 
-# График для сравнения истинных меток классов с предсказанными метками KMeans
+# График для истинных меток классов
 plt.subplot(2, 2, 1)
 plt.scatter(scaled_test_set[:, 0], scaled_test_set[:, 1], c=test_labels, cmap='viridis', marker='o', edgecolor='k', s=100)
 plt.title('Истинные метки классов')
@@ -116,6 +116,7 @@ plt.xlabel('Sepal Length (scaled)')
 plt.ylabel('Sepal Width (scaled)')
 plt.colorbar(label='True Label')
 
+# График для сравнения истинных меток классов с предсказанными метками KMeans
 plt.subplot(2, 2, 2)
 plt.scatter(test_set['sepal length (cm)'], test_set['sepal width (cm)'],
             c=mapped_predictions_kmeans, cmap='viridis', marker='o', edgecolor='k', s=100)
@@ -124,7 +125,7 @@ plt.xlabel('Sepal Length')
 plt.ylabel('Sepal Width')
 plt.colorbar(label='Mapped Label')
 
-# График для истинных меток классов
+# Еще один график для истинных меток классов
 plt.subplot(2, 2, 3)
 plt.scatter(scaled_test_set[:, 0], scaled_test_set[:, 1], c=test_labels, cmap='viridis', marker='o', edgecolor='k', s=100)
 plt.title('Истинные метки классов')
