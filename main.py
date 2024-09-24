@@ -40,7 +40,7 @@ train_data, test_data, train_labels, test_labels = train_test_split(
     iris_frame[['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']],
     iris_frame['target'],
     test_size=0.3,
-    random_state=42
+    # random_state=42
 )
 # print(train_data)
 # print(test_data)
