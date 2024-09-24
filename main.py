@@ -1,0 +1,159 @@
+import pandas as pd
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn import metrics
+from sklearn.svm import SVC
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import silhouette_score
+
+
+# Загружаем набор данных Ирисы
+iris = datasets.load_iris()
+
+print(iris.feature_names)
+# Смотрим на данные, выводим 10 первых строк:
+print(iris.data[:10])
+# Смотрим на целевую переменную:
+print(iris.target_names)
+print(iris.target)
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+
+
+# Создаем DataFrame из данных ирисов
+iris_frame = pd.DataFrame(iris.data, columns=iris.feature_names)
+
+# Добавляем столбец с целевой переменной
+iris_frame['target'] = iris.target
+
+# Для наглядности добавляем столбец с сортами
+iris_frame['name'] = iris_frame.target.apply(lambda x: iris.target_names[x])
+
+print(iris_frame)
+
+# Разделяем данные на обучающую и тестовую выборки
+train_data, test_data, train_labels, test_labels = train_test_split(
+    iris_frame[['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']],
+    iris_frame['target'],
+    test_size=0.3,
+    random_state=42
+)
+# print(train_data)
+# print(test_data)
+# print(train_labels)
+# print(test_labels)
+
+
+# Стандартизация данных
+scaler = StandardScaler()
+scaled_train_data = scaler.fit_transform(train_data)
+scaled_test_data = scaler.transform(test_data)
+
+# # Данные без стандартизации
+# scaled_train_data = train_data.values  # Преобразуем в массив NumPy
+# scaled_test_data = test_data.values
+
+
+# Обучение модели SVM
+svm = SVC(kernel='linear')
+svm.fit(scaled_train_data, train_labels)
+
+# Предсказание на тестовых данных (SVM)
+model_predictions_svm = svm.predict(scaled_test_data)
+
+
+# Обучение модели KMeans с использованием инициализации k-means++
+kmeans = KMeans(n_clusters=3, init='k-means++', max_iter=1000, n_init=10, random_state=42)
+kmeans.fit(scaled_train_data)
+
+# Предсказание на тестовых данных (KMeans)
+model_predictions_kmeans = kmeans.predict(scaled_test_data)
+
+
+# Создаем DataFrame для удобства
+results = pd.DataFrame({'Cluster': model_predictions_kmeans, 'TrueLabel': test_labels})
+
+# Находим наиболее частую метку для каждого кластера
+cluster_labels = results.groupby('Cluster')['TrueLabel'].agg(lambda x: x.mode()[0]).to_dict()
+
+print("Соответствие кластеров и истинных меток:")
+print(cluster_labels)
+
+# Ссопоставление кластеров с истинными метками
+mapped_predictions_kmeans = np.array([cluster_labels[cluster] for cluster in model_predictions_kmeans])
+
+# Оценка точности для KMeans и SVM
+accuracy_kmeans = metrics.accuracy_score(test_labels, mapped_predictions_kmeans)
+accuracy_svm = metrics.accuracy_score(test_labels, model_predictions_svm)
+
+print("Оценка точности для KMeans:", accuracy_kmeans)
+print(metrics.classification_report(test_labels, mapped_predictions_kmeans))
+
+print("Оценка точности для SVM:", accuracy_svm)
+print(metrics.classification_report(test_labels, model_predictions_svm))
+
+# # Оценка качества кластеризации с помощью коэффициента силуэта
+# silhouette_avg = silhouette_score(scaled_test_data, model_predictions_kmeans)
+# print("Silhouette Score для KMeans:", silhouette_avg)
+
+
+# # Получение центроидов и меток из KMeans
+# centroids = kmeans.cluster_centers_
+# labels = kmeans.labels_
+#
+# print("Центроиды:", centroids)
+# print("Метки:", labels)
+
+
+# Визуализация результатов
+plt.figure(figsize=(12, 12))
+
+# График для истинных меток классов
+plt.subplot(2, 2, 1)
+plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=test_labels, cmap='viridis', marker='o', edgecolor='k', s=100)
+plt.title('Истинные метки классов')
+plt.xlabel('Sepal Length (scaled)')
+plt.ylabel('Sepal Width (scaled)')
+plt.colorbar(label='True Label')
+
+# График для предсказанных меток SVM
+plt.subplot(2, 2, 2)
+plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=model_predictions_svm, cmap='viridis', marker='o', edgecolor='k', s=100)
+plt.title('Предсказанные метки SVM')
+plt.xlabel('Sepal Length (scaled)')
+plt.ylabel('Sepal Width (scaled)')
+plt.colorbar(label='Predicted Label')
+
+# График для сравнения истинных меток классов с предсказанными метками KMeans
+plt.subplot(2, 2, 3)
+plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=test_labels, cmap='viridis', marker='o', edgecolor='k', s=100)
+plt.title('Истинные метки классов')
+plt.xlabel('Sepal Length (scaled)')
+plt.ylabel('Sepal Width (scaled)')
+plt.colorbar(label='True Label')
+
+plt.subplot(2, 2, 4)
+plt.scatter(test_data['sepal length (cm)'], test_data['sepal width (cm)'],
+            c=mapped_predictions_kmeans, cmap='viridis', marker='o', edgecolor='k', s=100)
+plt.title('Предсказанные метки после сопоставления')
+plt.xlabel('Sepal Length')
+plt.ylabel('Sepal Width')
+plt.colorbar(label='Mapped Label')
+
+plt.tight_layout()
+plt.show()
+
+# # График для предсказанных кластеров KMeans
+# plt.subplot(2, 2, 4)
+# plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=model_predictions_kmeans, cmap='viridis', marker='o', edgecolor='k', s=100)
+# plt.title('Предсказанные кластеры KMeans')
+# plt.xlabel('Sepal Length (scaled)')
+# plt.ylabel('Sepal Width (scaled)')
+# plt.colorbar(label='Cluster')
+
+# plt.tight_layout()
+# plt.show()
