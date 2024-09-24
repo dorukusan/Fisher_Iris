@@ -20,8 +20,11 @@ print(iris.data[:10])
 print(iris.target_names)
 print(iris.target)
 
+# Снимаем ограничения вывода таблицы
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', None)
+pd.set_option('display.width', None)
 
 
 # Создаем DataFrame из данных ирисов
@@ -32,6 +35,8 @@ iris_frame['target'] = iris.target
 
 # Для наглядности добавляем столбец с сортами
 iris_frame['name'] = iris_frame.target.apply(lambda x: iris.target_names[x])
+
+print(iris_frame)
 
 
 # Разделяем данные на обучающую и тестовую выборки
@@ -62,7 +67,7 @@ model_predictions_kmeans = kmeans.predict(scaled_test_set)
 
 
 # Обучение модели SVM
-svm = SVC(kernel='linear')
+svm = SVC(kernel='linear', C=100)
 svm.fit(scaled_train_set, train_labels)
 
 # Предсказание на тестовых данных (SVM)
