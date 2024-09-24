@@ -53,20 +53,20 @@ scaled_test_set = scaler.transform(test_set)
 # scaled_test_data = test_data.values
 
 
-# Обучение модели SVM
-svm = SVC(kernel='linear')
-svm.fit(scaled_train_set, train_labels)
-
-# Предсказание на тестовых данных (SVM)
-model_predictions_svm = svm.predict(scaled_test_set)
-
-
 # Обучение модели KMeans с использованием инициализации k-means++
 kmeans = KMeans(n_clusters=3, init='k-means++', max_iter=1000, n_init=10, random_state=42)
 kmeans.fit(scaled_train_set)
 
 # Предсказание на тестовых данных (KMeans)
 model_predictions_kmeans = kmeans.predict(scaled_test_set)
+
+
+# Обучение модели SVM
+svm = SVC(kernel='linear')
+svm.fit(scaled_train_set, train_labels)
+
+# Предсказание на тестовых данных (SVM)
+model_predictions_svm = svm.predict(scaled_test_set)
 
 
 # Создаем DataFrame для удобства
