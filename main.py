@@ -3,8 +3,8 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
-from sklearn import metrics
 from sklearn.svm import SVC
+from sklearn import metrics
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import silhouette_score
@@ -42,6 +42,7 @@ train_data, test_data, train_labels, test_labels = train_test_split(
     test_size=0.3,
     # random_state=42
 )
+
 # print(train_data)
 # print(test_data)
 # print(train_labels)
@@ -80,20 +81,20 @@ results = pd.DataFrame({'Cluster': model_predictions_kmeans, 'TrueLabel': test_l
 # Находим наиболее частую метку для каждого кластера
 cluster_labels = results.groupby('Cluster')['TrueLabel'].agg(lambda x: x.mode()[0]).to_dict()
 
-print("Соответствие кластеров и истинных меток:")
+print("\nСоответствие кластеров и истинных меток:")
 print(cluster_labels)
 
-# Ссопоставление кластеров с истинными метками
+# Сопоставление кластеров с истинными метками
 mapped_predictions_kmeans = np.array([cluster_labels[cluster] for cluster in model_predictions_kmeans])
 
 # Оценка точности для KMeans и SVM
 accuracy_kmeans = metrics.accuracy_score(test_labels, mapped_predictions_kmeans)
 accuracy_svm = metrics.accuracy_score(test_labels, model_predictions_svm)
 
-print("Оценка точности для KMeans:", accuracy_kmeans)
+print("\nОценка точности для KMeans:", accuracy_kmeans)
 print(metrics.classification_report(test_labels, mapped_predictions_kmeans))
 
-print("Оценка точности для SVM:", accuracy_svm)
+print("\nОценка точности для SVM:", accuracy_svm)
 print(metrics.classification_report(test_labels, model_predictions_svm))
 
 # # Оценка качества кластеризации с помощью коэффициента силуэта
