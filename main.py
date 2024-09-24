@@ -33,7 +33,7 @@ iris_frame['target'] = iris.target
 # Для наглядности добавляем столбец с сортами
 iris_frame['name'] = iris_frame.target.apply(lambda x: iris.target_names[x])
 
-print(iris_frame)
+# print(iris_frame)
 
 # Разделяем данные на обучающую и тестовую выборки
 train_data, test_data, train_labels, test_labels = train_test_split(
@@ -112,7 +112,7 @@ print(metrics.classification_report(test_labels, model_predictions_svm))
 # Визуализация результатов
 plt.figure(figsize=(12, 12))
 
-# График для истинных меток классов
+# График для сравнения истинных меток классов с предсказанными метками KMeans
 plt.subplot(2, 2, 1)
 plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=test_labels, cmap='viridis', marker='o', edgecolor='k', s=100)
 plt.title('Истинные метки классов')
@@ -120,15 +120,15 @@ plt.xlabel('Sepal Length (scaled)')
 plt.ylabel('Sepal Width (scaled)')
 plt.colorbar(label='True Label')
 
-# График для предсказанных меток SVM
 plt.subplot(2, 2, 2)
-plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=model_predictions_svm, cmap='viridis', marker='o', edgecolor='k', s=100)
-plt.title('Предсказанные метки SVM')
-plt.xlabel('Sepal Length (scaled)')
-plt.ylabel('Sepal Width (scaled)')
-plt.colorbar(label='Predicted Label')
+plt.scatter(test_data['sepal length (cm)'], test_data['sepal width (cm)'],
+            c=mapped_predictions_kmeans, cmap='viridis', marker='o', edgecolor='k', s=100)
+plt.title('Предсказанные кластеры KMeans после сопоставления')
+plt.xlabel('Sepal Length')
+plt.ylabel('Sepal Width')
+plt.colorbar(label='Mapped Label')
 
-# График для сравнения истинных меток классов с предсказанными метками KMeans
+# График для истинных меток классов
 plt.subplot(2, 2, 3)
 plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=test_labels, cmap='viridis', marker='o', edgecolor='k', s=100)
 plt.title('Истинные метки классов')
@@ -136,13 +136,13 @@ plt.xlabel('Sepal Length (scaled)')
 plt.ylabel('Sepal Width (scaled)')
 plt.colorbar(label='True Label')
 
+# График для предсказанных меток SVM
 plt.subplot(2, 2, 4)
-plt.scatter(test_data['sepal length (cm)'], test_data['sepal width (cm)'],
-            c=mapped_predictions_kmeans, cmap='viridis', marker='o', edgecolor='k', s=100)
-plt.title('Предсказанные метки после сопоставления')
-plt.xlabel('Sepal Length')
-plt.ylabel('Sepal Width')
-plt.colorbar(label='Mapped Label')
+plt.scatter(scaled_test_data[:, 0], scaled_test_data[:, 1], c=model_predictions_svm, cmap='viridis', marker='o', edgecolor='k', s=100)
+plt.title('Предсказанные метки SVM')
+plt.xlabel('Sepal Length (scaled)')
+plt.ylabel('Sepal Width (scaled)')
+plt.colorbar(label='Predicted Label')
 
 plt.tight_layout()
 plt.show()
