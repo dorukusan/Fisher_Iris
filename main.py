@@ -54,8 +54,8 @@ scaled_train_set = scaler.fit_transform(train_set)
 scaled_test_set = scaler.transform(test_set)
 
 # # Данные без стандартизации
-# scaled_train_data = train_data.values  # Преобразуем в массив NumPy
-# scaled_test_data = test_data.values
+# scaled_train_set = train_set.values  # Преобразуем в массив NumPy
+# scaled_test_set = test_set.values
 
 
 # Обучение модели KMeans с использованием инициализации k-means++
